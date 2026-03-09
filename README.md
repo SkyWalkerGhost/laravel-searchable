@@ -350,13 +350,22 @@ Search::query(Payment::query())
 
 ---
 
-# Ordering
+# Available Ordering/Helper Methods
+### methods:
 
-Ordering helpers are available.
+- get
+- first
+- pluck
+- orderBy
+- orderByDesc
+- latest
+- paginate
+- cursorPaginate
 
 ```php
 Search::query(Payment::query())
-    ->orderByDesc();
+    ->orderByDesc()
+    ->get();
 ```
 
 Example SQL:
