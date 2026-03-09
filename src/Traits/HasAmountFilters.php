@@ -16,27 +16,21 @@ trait HasAmountFilters
         string $operator = '=',
         ?Request $request = null
     ): static {
-        if ($request !== null) {
-            $value = $this->parseFloat(field: $field, value: $value, request: $request);
-        }
+        $value = $this->parseFloat(field: $field, value: $value, request: $request);
 
         return $this->applyNumericFilter(field: $field, value: $value, operator: $operator);
     }
 
     public function amountGreaterThan(string $field = 'amount', ?float $value = null, ?Request $request = null): static
     {
-        if ($request !== null) {
-            $value = $this->parseFloat(field: $field, value: $value, request: $request);
-        }
+        $value = $this->parseFloat(field: $field, value: $value, request: $request);
 
         return $this->applyNumericFilter(field: $field, value: $value, operator: '>');
     }
 
     public function amountLessThan(string $field = 'amount', ?float $value = null, ?Request $request = null): static
     {
-        if ($request !== null) {
-            $value = $this->parseFloat(field: $field, value: $value, request: $request);
-        }
+        $value = $this->parseFloat(field: $field, value: $value, request: $request);
 
         return $this->applyNumericFilter(field: $field, value: $value, operator: '<');
     }

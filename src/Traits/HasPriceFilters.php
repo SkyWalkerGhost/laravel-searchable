@@ -16,9 +16,7 @@ trait HasPriceFilters
         string $operator = '=',
         ?Request $request = null
     ): static {
-        if ($request !== null) {
-            $value = $this->parseFloat(field: $field, value: $value, request: $request);
-        }
+        $value = $this->parseFloat(field: $field, value: $value, request: $request);
 
         return $this->applyNumericFilter(field: $field, value: $value, operator: $operator);
     }
@@ -28,18 +26,14 @@ trait HasPriceFilters
         ?float $value = null,
         ?Request $request = null
     ): static {
-        if ($request !== null) {
-            $value = $this->parseFloat(field: $field, value: $value, request: $request);
-        }
+        $value = $this->parseFloat(field: $field, value: $value, request: $request);
 
         return $this->applyNumericFilter(field: $field, value: $value, operator: '>');
     }
 
     public function priceLessThan(string $field = 'price', ?float $value = null, ?Request $request = null): static
     {
-        if ($request !== null) {
-            $value = $this->parseFloat(field: $field, value: $value, request: $request);
-        }
+        $value = $this->parseFloat(field: $field, value: $value, request: $request);
 
         return $this->applyNumericFilter(field: $field, value: $value, operator: '<');
     }
