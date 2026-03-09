@@ -9,6 +9,13 @@ The package includes multiple filter types such as:
 * Time filters
 * Boolean filters
 * Ordering helpers
+* Full-text search
+* Eager loading
+* Validation
+* Custom methods
+
+Filtering is applied through a **static `Search` builder** that wraps an Eloquent query.
+
 ---
 
 # Why Use This Package
@@ -35,7 +42,6 @@ composer require shergela/laravel-searchable
 # Basic Usage
 
 The package is used through the `Search` class.
-Filtering is applied through a **static `Search` builder** that wraps an Eloquent query.
 
 ```php
 use Shergela\Searchable\Search;
@@ -53,17 +59,14 @@ $payments = Search::query(Payment::query())
 
 The `Search` builder wraps your Eloquent query and applies filters dynamically.
 
----
 # Validation
 
-Filtering often uses request values; therefore, validation is supported.
+Filtering often uses request values, therefore validation is supported.
 
 Validation can be defined in **two ways**:
 
 1. Using the `Validatable` interface on the model
 2. Passing rules manually to the `validate()` method
-
----
 
 # Using the `Validatable` Interface
 
@@ -174,17 +177,25 @@ WHERE amount = 100
 
 # 2. Passing Field Name + Request
 
-If the request field name differs from the database column, pass both.
+Each filter method has a **predefined default field name** that it expects in both the request input and the database column. If your input name and database column name match but differ from the default, pass `field` explicitly alongside `request`.
+
+> **Important:** The `field` value must match **both** the request input name and the database column name — they must be identical.
 
 ```php
 Search::query(Payment::query())
-    ->amount(field: 'amount', request: $request);
+    ->amount(field: 'total_amount', request: $request);
 ```
 
 Example request:
 
 ```
-GET /payments?payment_amount=100
+GET /payments?total_amount=100
+```
+
+SQL equivalent:
+
+```
+WHERE total_amount = 100
 ```
 
 ---
@@ -224,6 +235,107 @@ Search::query(Payment::query())
 ```
 
 Without `ignoreMissingFields()`, a disabled or absent field could still be evaluated and result in an unintended `WHERE` clause.
+
+---
+
+# Full Text Search
+
+The `fullTextSearch()` method performs an optimized text search across one or more columns. It automatically detects the database driver and applies the most appropriate search strategy.
+
+## Supported Drivers
+
+| Driver | Strategy |
+|---|---|
+| `pgsql` | `tsvector` + `plainto_tsquery` |
+| `mysql` | `MATCH ... AGAINST` (Natural Language Mode) |
+| Other (SQLite, etc.) | `LIKE` fallback with `LOWER()` |
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `$columns` | `array` | `['full_name']` | Columns to search in (max 5) |
+| `$relation` | `string\|null` | `null` | Relation name if searching in a related model |
+| `$value` | `string\|null` | `null` | Search value. If `null`, filter is skipped |
+
+## Basic Usage
+
+Search within the model's own columns:
+
+```php
+Search::query(Payment::query())
+    ->fullTextSearch(
+        columns: ['first_name', 'last_name'],
+        value: $request->string('name')->value()
+    );
+```
+
+## Searching Within a Relation
+
+If the searchable columns belong to a related model, pass the relation name:
+
+```php
+Search::query(Payment::query())
+    ->fullTextSearch(
+        columns: ['first_name', 'last_name'],
+        relation: 'user',
+        value: $request->string('user_name')->value()
+    );
+```
+
+This translates to:
+
+```sql
+WHERE EXISTS (
+    SELECT * FROM users
+    WHERE payments.user_id = users.id
+    AND MATCH(first_name, last_name) AGAINST(? IN NATURAL LANGUAGE MODE)
+)
+```
+
+## Driver Behavior
+
+**PostgreSQL:**
+```sql
+WHERE (to_tsvector('simple', coalesce("first_name", '')) || to_tsvector('simple', coalesce("last_name", '')))
+    @@ plainto_tsquery('simple', ?)
+```
+
+**MySQL:**
+```sql
+WHERE MATCH(`first_name`, `last_name`) AGAINST(? IN NATURAL LANGUAGE MODE)
+```
+
+**SQLite / Other (LIKE fallback):**
+```sql
+WHERE LOWER("first_name") LIKE '%john%'
+   OR LOWER("last_name") LIKE '%john%'
+```
+
+## Validation Rules
+
+The method enforces two rules on the `columns` array:
+
+- Maximum **5 columns** allowed
+- Column names must be **valid identifiers** — only letters, numbers, underscores, and dots are permitted (e.g. `first_name`, `address.city`). SQL injection attempts are rejected.
+
+```php
+// ✅ Valid
+->fullTextSearch(columns: ['first_name', 'last_name', 'email'], value: 'john')
+
+// ❌ Throws InvalidArgumentException — too many columns
+->fullTextSearch(columns: ['a', 'b', 'c', 'd', 'e', 'f'], value: 'john')
+
+// ❌ Throws InvalidArgumentException — invalid column name
+->fullTextSearch(columns: ['first_name; DROP TABLE users'], value: 'john')
+```
+
+## Notes
+
+- If `$value` is `null`, the filter is **silently skipped** — no query condition is added.
+- The `LIKE` fallback is **case-insensitive** via `LOWER()`.
+- For **MySQL**, ensure the columns have a `FULLTEXT` index for optimal performance.
+- For **PostgreSQL**, the `'simple'` dictionary is used, meaning no language-specific stemming is applied.
 
 ---
 
@@ -317,7 +429,7 @@ UserService::query()
     ->paginate(15);
 ```
 
-> **Recommendation:** Call `builder()` at the **end of the chain**, after all package methods have been applied. Calling it earlier will return a plain Eloquent builder, meaning you will lose access to the package's custom methods for any later calls.
+> **Recommendation:** Call `builder()` at the **end of the chain**, after all package methods have been applied. Calling it earlier will return a plain Eloquent builder, meaning you will lose access to the package's custom methods for any subsequent calls.
 
 ---
 
