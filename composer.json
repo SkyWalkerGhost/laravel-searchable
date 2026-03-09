@@ -21,7 +21,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Shergela\\Searchable\\": "packages/Shergela/Searchable/src/"
+            "Shergela\\Searchable\\": "src/"
         }
     },
     "scripts": {
