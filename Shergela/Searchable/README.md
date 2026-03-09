@@ -1,0 +1,342 @@
+# Laravel Searchable
+
+`laravel-searchable` is a Laravel package that provides a simple and reusable way to apply **dynamic filtering and searching** to Eloquent queries.
+
+The package includes multiple filter types such as:
+
+* Numeric filters (amount, balance, price)
+* Date filters
+* Time filters
+* Boolean filters
+* Ordering helpers
+---
+
+# Why Use This Package
+
+This package is useful when your application has:
+
+* many filtering conditions
+* large search APIs
+* reusable filtering logic
+* request-based query filtering
+
+It keeps your controllers and services **clean and readable** while keeping filtering logic centralized.
+
+---
+
+# Installation
+
+```bash
+composer require shergela/laravel-searchable
+```
+
+---
+
+# Basic Usage
+
+The package is used through the `Search` class.
+Filtering is applied through a **static `Search` builder** that wraps an Eloquent query.
+
+```php
+use Shergela\Searchable\Search;
+
+$payments = Search::query(Payment::query())
+    ->ignoreMissingFields()
+    ->with(['payable', 'user'])
+    ->id(value: $request->integer('payment_id', null))
+    ->userId(request: $request)
+    ->status(request: $request)
+    ->validate()
+    ->amount(request: $request)
+    ->orderByDesc();
+```
+
+The `Search` builder wraps your Eloquent query and applies filters dynamically.
+
+---
+# Validation
+
+Filtering often uses request values; therefore, validation is supported.
+
+Validation can be defined in **two ways**:
+
+1. Using the `Validatable` interface on the model
+2. Passing rules manually to the `validate()` method
+
+---
+
+# Using the `Validatable` Interface
+
+Your model may implement the `Validatable` interface.
+
+```php
+use Illuminate\Database\Eloquent\Model;
+use Shergela\Searchable\Contracts\Validatable;
+
+class Payment extends Model implements Validatable
+{
+    public function rules(): array
+    {
+        return [
+            'id' => ['nullable', 'integer'],
+            'user_id' => ['nullable', 'integer'],
+            'status' => ['nullable', 'string'],
+            'amount' => ['nullable', 'numeric'],
+        ];
+    }
+}
+```
+
+When the `validate()` method is called, the package will automatically read these rules.
+
+---
+
+# Passing Rules Manually
+
+If you prefer not to use the interface, you may pass validation rules directly.
+
+```php
+use Shergela\Searchable\Search;
+
+$payments = Search::query(Payment::query())
+    ->validate([
+        'amount' => ['nullable', 'numeric'],
+        'status' => ['nullable', 'string'],
+    ])
+    ->amount(request: $request);
+```
+
+# Redirect After Validation Failure
+
+By default, when validation fails, Laravel redirects back to the previous page. If you need to redirect to a **specific URL** after a failed validation, use the `redirectTo()` method.
+
+```php
+Search::query(Payment::query())
+    ->redirectTo(url: '/payments')
+    ->validate([
+        'amount' => ['nullable', 'numeric'],
+        'status' => ['nullable', 'string'],
+    ])
+    ->amount(request: $request)
+    ->status(request: $request)
+    ->orderByDesc();
+```
+
+> **Recommendation:** Call `redirectTo()` before `validate()` so the redirect destination is defined prior to validation being executed.
+
+---
+
+# Important Rule for GET Requests
+
+When filtering using **GET requests**, all filter fields **must include the `nullable` rule**.
+
+Example:
+
+```php
+[
+    'amount' => ['nullable', 'numeric'],
+]
+```
+
+This is important because when the field is not present in the request, Laravel validation would otherwise fail.
+
+---
+
+# Filtering Methods
+
+Every filter method supports **three ways of receiving its value**.
+This allows the filter to work with requests, manual values, or custom input names.
+
+---
+
+# 1. Passing the Request
+
+The filter will automatically read the value from the request using the **field name**.
+
+```php
+Search::query(Payment::query())
+    ->amount(request: $request);
+```
+
+Example request:
+
+```
+GET /payments?amount=100
+```
+
+SQL equivalent:
+
+```
+WHERE amount = 100
+```
+
+---
+
+# 2. Passing Field Name + Request
+
+If the request field name differs from the database column, pass both.
+
+```php
+Search::query(Payment::query())
+    ->amount(field: 'amount', request: $request);
+```
+
+Example request:
+
+```
+GET /payments?payment_amount=100
+```
+
+---
+
+# 3. Passing Field + Value
+
+You may bypass the request completely.
+
+```php
+Search::query(Payment::query())
+    ->amount(field: 'amount', value: 100);
+```
+
+This is useful when filtering from:
+
+* DTOs
+* services
+* computed values
+* CLI inputs
+
+---
+
+# Ignoring Missing Fields
+
+When a form has **disabled input fields**, the browser does not include them in the request payload. This means the corresponding key will be entirely absent from the request, which can cause the filter to behave unexpectedly — for example, applying an empty condition to the query.
+
+Calling `ignoreMissingFields()` instructs the package to **skip any filter whose field is not present in the request**, preventing empty or unnecessary query conditions from being applied.
+
+> **Recommendation:** Always call `ignoreMissingFields()` at the **beginning of the chain**, before any filter methods, to ensure consistent behavior across all filters.
+
+```php
+Search::query(Payment::query())
+    ->ignoreMissingFields()  // <-- call this first
+    ->status(request: $request)
+    ->amount(request: $request)
+    ->orderByDesc();
+```
+
+Without `ignoreMissingFields()`, a disabled or absent field could still be evaluated and result in an unintended `WHERE` clause.
+
+---
+
+# Eager Loading
+
+Since the package wraps an Eloquent builder, you may also use `with()`.
+
+```php
+Search::query(Payment::query())
+    ->with(['user', 'payable']);
+```
+
+---
+
+# Ordering
+
+Ordering helpers are available.
+
+```php
+Search::query(Payment::query())
+    ->orderByDesc();
+```
+
+Example SQL:
+
+```
+ORDER BY id DESC
+```
+
+---
+
+# Custom Methods
+
+If the built-in filter methods are not enough, you can extend the `Searchable` class and define your own custom methods.
+
+## Creating a Custom Service
+
+Extend `Shergela\Searchable\Searchable` and implement the `model()` method to return the base Eloquent query. Then define your custom filter methods using the internal `search()` helper.
+
+```php
+use Illuminate\Database\Eloquent\Builder;
+use Shergela\Searchable\Searchable;
+
+class UserService extends Searchable
+{
+    protected function model(): Builder
+    {
+        return User::query();
+    }
+
+    public function customMethod(string $field = 'id', ?string $value = null, string $operator = '='): static
+    {
+        $this->search(field: $field, operator: $operator, value: $value);
+
+        return $this;
+    }
+
+    public function customMethod2(string $field = 'id', ?string $value = null, string $operator = '='): static
+    {
+        $this->search(field: $field, operator: $operator, value: $value);
+
+        return $this;
+    }
+}
+```
+
+## Calling Custom Methods
+
+Use the static `query()` entry point, just like with the `Search` class.
+
+```php
+UserService::query()
+    ->customMethod(field: 'status', value: $request->string('status')->value())
+    ->customMethod2(field: 'email', value: $request->string('email')->value())
+    ->orderByDesc();
+```
+
+This approach keeps filtering logic **encapsulated in a dedicated service class**, making it easy to reuse and test.
+
+---
+
+# Using Laravel's Eloquent Methods Directly
+
+If you need to use native Laravel Eloquent methods (such as `where`, `select`, `join`, `paginate`, etc.), you can access the underlying Eloquent builder via the `builder()` method.
+
+```php
+UserService::query()
+    ->customMethod(field: 'status', value: $request->string('status')->value())
+    ->builder()
+    ->where('verified', true)
+    ->paginate(15);
+```
+
+> **Recommendation:** Call `builder()` at the **end of the chain**, after all package methods have been applied. Calling it earlier will return a plain Eloquent builder, meaning you will lose access to the package's custom methods for any later calls.
+
+---
+
+# Full Example
+
+```php
+use Shergela\Searchable\Search;
+
+$payments = Search::query(Payment::query())
+    ->ignoreMissingFields()
+    ->with(['payable', 'user'])
+    ->id(value: $request->integer('payment_id', null))
+    ->userId(request: $request)
+    ->status(request: $request)
+    ->validate()
+    ->amount(request: $request)
+    ->orderByDesc();
+```
+
+# License
+
+MIT

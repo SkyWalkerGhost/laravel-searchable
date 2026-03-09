@@ -1,0 +1,26 @@
+# Laravel / Package
+/vendor
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+/.idea
+/.vscode
+/.phpunit.result.cache
+/.env
+/.env.*.backup
+/.php-cs-fixer.cache
+Homestead.yaml
+Homestead.json
+/.DS_Store
+
+# Composer
+composer.lock
+
+# PHPUnit
+phpunit.xml
+phpunit.xml.dist
+
+# Pint / QA / cache
+.phpunit.result.cache
+.php-cs-fixer.cache
