@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shergela\Searchable\Traits;
 
 use BackedEnum;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 trait HasTextFilters
@@ -14,10 +13,10 @@ trait HasTextFilters
         string $field,
         ?string $value = null,
         string $operator = '=',
-        ?Request $request = null
+
     ): static {
 
-        $value = $this->parseString(field: $field, value: $value, request: $request);
+        $value = $this->parseString(field: $field, value: $value);
 
         if ($value === null) {
             return $this;
@@ -30,105 +29,93 @@ trait HasTextFilters
         string $field = 'name',
         ?string $value = null,
         string $operator = 'ilike',
-        ?Request $request = null
     ): static {
-        return $this->text(field: $field, value: $value, operator: $operator, request: $request);
+        return $this->text(field: $field, value: $value, operator: $operator);
     }
 
     public function firstName(
         string $field = 'first_name',
         ?string $value = null,
         string $operator = 'ilike',
-        ?Request $request = null
     ): static {
-        return $this->name(field: $field, value: $value, operator: $operator, request: $request);
+        return $this->name(field: $field, value: $value, operator: $operator);
     }
 
     public function lastName(
         string $field = 'last_name',
         ?string $value = null,
         string $operator = 'ilike',
-        ?Request $request = null
     ): static {
-        return $this->name(field: $field, value: $value, operator: $operator, request: $request);
+        return $this->name(field: $field, value: $value, operator: $operator);
     }
 
     public function nickname(
         string $field = 'nickname',
         ?string $value = null,
         string $operator = 'ilike',
-        ?Request $request = null
+
     ): static {
-        return $this->name(field: $field, value: $value, operator: $operator, request: $request);
+        return $this->name(field: $field, value: $value, operator: $operator);
     }
 
     public function email(
         string $field = 'email',
         ?string $value = null,
         string $operator = 'ilike',
-        ?Request $request = null
     ): static {
-        return $this->name(field: $field, value: $value, operator: $operator, request: $request);
+        return $this->name(field: $field, value: $value, operator: $operator);
     }
 
     public function phone(
         string $field = 'phone',
         ?string $value = null,
         string $operator = 'ilike',
-        ?Request $request = null
     ): static {
-        return $this->name(field: $field, value: $value, operator: $operator, request: $request);
+        return $this->name(field: $field, value: $value, operator: $operator);
     }
 
     public function country(
         string $field = 'country',
         ?string $value = null,
         string $operator = '=',
-        ?Request $request = null
     ): static {
-        return $this->text(field: $field, value: $value, operator: $operator, request: $request);
+        return $this->text(field: $field, value: $value, operator: $operator);
     }
 
     public function city(
         string $field = 'city',
         ?string $value = null,
         string $operator = '=',
-        ?Request $request = null
     ): static {
-        return $this->text(field: $field, value: $value, operator: $operator, request: $request);
+        return $this->text(field: $field, value: $value, operator: $operator);
     }
 
     public function type(
         string $field = 'type',
         ?string $value = null,
         string $operator = '=',
-        ?Request $request = null
     ): static {
-        return $this->text(field: $field, value: $value, operator: $operator, request: $request);
+        return $this->text(field: $field, value: $value, operator: $operator);
     }
 
     public function status(
         string $field = 'status',
         ?string $value = null,
         string $operator = '=',
-        ?Request $request = null
     ): static {
-        return $this->text(field: $field, value: $value, operator: $operator, request: $request);
+        return $this->text(field: $field, value: $value, operator: $operator);
     }
 
     public function role(
         string $field = 'role',
         BackedEnum|string|null $value = null,
         string $operator = '=',
-        ?Request $request = null
     ): static {
-        if ($request !== null) {
-            $value = $this->validateInputs(field: $field, request: $request);
-        }
-
         if ($value instanceof BackedEnum) {
             $value = $value->value;
         }
+
+        $value = $this->parseString(field: $field, value: $value);
 
         if ($value === null) {
             return $this;

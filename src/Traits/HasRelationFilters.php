@@ -29,7 +29,7 @@ trait HasRelationFilters
             return $this;
         }
 
-        in_array($operator, static::SEARCH_OPERATORS)
+        in_array($operator, static::LIKE_OPERATORS)
             ? $this->builder->whereRelation($relation, $field, $operator, "%$value%")
             : $this->builder->whereRelation($relation, $field, $operator, $value);
 

@@ -4,149 +4,211 @@ declare(strict_types=1);
 
 namespace Shergela\Searchable\Traits;
 
-use Illuminate\Http\Request;
+use Exception;
 use Illuminate\Support\Carbon;
 
 trait HasDateFilters
 {
-    public function date(
-        string $field = 'created_at',
-        Carbon|string|null $date = null,
-        ?Request $request = null
+    /**
+     * Apply a single date filter.
+     *
+     * @throws Exception
+     */
+    protected function applyDateFilter(
+        string $field,
+        Carbon|string|null $date,
+        string $operator = '='
     ): static {
-        $date = $this->parseDate(field: $field, date: $date, request: $request);
+        $date = $this->parseDate(field: $field, date: $date);
 
         if ($date === null) {
             return $this;
         }
 
-        $this->builder->whereDate($field, $date);
+        $this->builder->whereDate($field, $operator, $date);
 
         return $this;
     }
 
-    // From date
-    public function fromDate(
-        string $field = 'created_at',
-        Carbon|string|null $date = null,
-        ?Request $request = null
+    /**
+     * Apply a date range filter (from/to). Nullable boundaries are allowed.
+     *
+     * @throws Exception
+     */
+    protected function applyDateRange(
+        string $field,
+        Carbon|string|null $from = null,
+        Carbon|string|null $to = null
     ): static {
-        $date = $this->parseDate(field: $field, date: $date, request: $request);
-
-        if ($date === null) {
-            return $this;
+        if ($from !== null) {
+            $this->applyDateFilter(field: $field, date: $from, operator: '>=');
         }
 
-        $this->builder->whereDate($field, '>=', $date);
-
-        return $this;
-    }
-
-    // To date
-    public function toDate(
-        string $field = 'created_at',
-        Carbon|string|null $date = null,
-        ?Request $request = null
-    ): static {
-        $date = $this->parseDate(field: $field, date: $date, request: $request);
-
-        if ($date === null) {
-            return $this;
+        if ($to !== null) {
+            $this->applyDateFilter(field: $field, date: $to, operator: '<=');
         }
 
-        $this->builder->whereDate($field, '<=', $date);
-
         return $this;
     }
 
-    // Range
+    // Single date shortcuts
+
+    /**
+     * @throws Exception
+     */
+    public function date(string $field = 'created_at', Carbon|string|null $date = null): static
+    {
+        return $this->applyDateFilter(field: $field, date: $date);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function fromDate(string $field = 'created_at', Carbon|string|null $date = null): static
+    {
+        return $this->applyDateFilter(field: $field, date: $date, operator: '>=');
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function toDate(string $field = 'created_at', Carbon|string|null $date = null): static
+    {
+        return $this->applyDateFilter(field: $field, date: $date, operator: '<=');
+    }
+
+    /**
+     * @throws Exception
+     */
     public function dateRange(
         string $field = 'created_at',
         Carbon|string|null $from = null,
-        Carbon|string|null $to = null,
-        ?Request $request = null
+        Carbon|string|null $to = null
     ): static {
-        $from = $this->parseDate(field: $field, date: $from, request: $request);
-        $to = $this->parseDate(field: $field, date: $to, request: $request);
-
-        if ($from === null || $to === null) {
-            return $this;
-        }
-
-        return $this->fromDate(field: $field, date: $from)
-            ->toDate(field: $field, date: $to);
+        return $this->applyDateRange(field: $field, from: $from, to: $to);
     }
 
-    // Shortcut methods
+    // Common shortcuts
+
+    /**
+     * @throws Exception
+     */
     public function today(string $field = 'created_at'): static
     {
-        return $this->date(field: $field, date: Carbon::today());
+        return $this->applyDateFilter(field: $field, date: Carbon::today());
     }
 
+    /**
+     * @throws Exception
+     */
     public function yesterday(string $field = 'created_at'): static
     {
-        return $this->date(field: $field, date: Carbon::yesterday());
+        return $this->applyDateFilter(field: $field, date: Carbon::yesterday());
     }
 
+    /**
+     * @throws Exception
+     */
     public function thisWeek(string $field = 'created_at'): static
     {
-        return $this->fromDate(field: $field, date: Carbon::now()->startOfWeek())
-            ->toDate(field: $field, date: Carbon::now()->endOfWeek());
+        return $this->applyDateRange(
+            field: $field,
+            from: Carbon::now()->startOfWeek(),
+            to: Carbon::now()->endOfWeek()
+        );
     }
 
+    /**
+     * @throws Exception
+     */
     public function lastWeek(string $field = 'created_at'): static
     {
-        return $this->fromDate(field: $field, date: Carbon::now()->subWeek()->startOfWeek())
-            ->toDate(field: $field, date: Carbon::now()->subWeek()->endOfWeek());
+        return $this->applyDateRange(
+            field: $field,
+            from: Carbon::now()->subWeek()->startOfWeek(),
+            to: Carbon::now()->subWeek()->endOfWeek()
+        );
     }
 
+    /**
+     * @throws Exception
+     */
     public function thisMonth(string $field = 'created_at'): static
     {
-        return $this->fromDate(field: $field, date: Carbon::now()->startOfMonth())
-            ->toDate(field: $field, date: Carbon::now()->endOfMonth());
+        return $this->applyDateRange(
+            field: $field,
+            from: Carbon::now()->startOfMonth(),
+            to: Carbon::now()->endOfMonth()
+        );
     }
 
+    /**
+     * @throws Exception
+     */
     public function lastMonth(string $field = 'created_at'): static
     {
-        return $this->fromDate(field: $field, date: Carbon::now()->subMonth()->startOfMonth())
-            ->toDate(field: $field, date: Carbon::now()->subMonth()->endOfMonth());
+        return $this->applyDateRange(
+            field: $field,
+            from: Carbon::now()->subMonth()->startOfMonth(),
+            to: Carbon::now()->subMonth()->endOfMonth()
+        );
     }
 
+    /**
+     * @throws Exception
+     */
     public function thisYear(string $field = 'created_at'): static
     {
-        return $this->fromDate(field: $field, date: Carbon::now()->startOfYear())
-            ->toDate(field: $field, date: Carbon::now()->endOfYear());
+        return $this->applyDateRange(
+            field: $field,
+            from: Carbon::now()->startOfYear(),
+            to: Carbon::now()->endOfYear()
+        );
     }
 
+    /**
+     * @throws Exception
+     */
     public function lastYear(string $field = 'created_at'): static
     {
-        return $this->fromDate(field: $field, date: Carbon::now()->subYear()->startOfYear())
-            ->toDate(field: $field, date: Carbon::now()->subYear()->endOfYear());
+        return $this->applyDateRange(
+            field: $field,
+            from: Carbon::now()->subYear()->startOfYear(),
+            to: Carbon::now()->subYear()->endOfYear()
+        );
     }
 
     // Year / Month filters
-    public function year(string $field = 'created_at', ?int $year = null, ?Request $request = null): static
+
+    /**
+     * @throws Exception
+     */
+    public function year(string $field = 'created_at', ?int $year = null): static
     {
-        if ($request !== null) {
-            $year = $this->validateInputs(field: $field, request: $request, scalarType: ScalarType::Int);
-        }
+        $year ??= Carbon::now()->year;
 
-        if ($year === null) {
-            return $this;
-        }
-
-        return $this->fromDate(field: $field, date: Carbon::createFromDate($year)->startOfYear())
-            ->toDate(field: $field, date: Carbon::createFromDate($year)->endOfYear());
+        return $this->applyDateRange(
+            field: $field,
+            from: Carbon::create($year)->startOfYear(),
+            to: Carbon::create($year)->endOfYear()
+        );
     }
 
+    /**
+     * @throws Exception
+     */
     public function month(string $field = 'created_at', ?int $month = null, ?int $year = null): static
     {
         if ($month === null) {
             return $this;
         }
+
         $year ??= Carbon::now()->year;
 
-        return $this->fromDate(field: $field, date: Carbon::create($year, $month)->startOfMonth())
-            ->toDate(field: $field, date: Carbon::create($year, $month)->endOfMonth());
+        return $this->applyDateRange(
+            field: $field,
+            from: Carbon::create($year, $month)->startOfMonth(),
+            to: Carbon::create($year, $month)->endOfMonth()
+        );
     }
 }

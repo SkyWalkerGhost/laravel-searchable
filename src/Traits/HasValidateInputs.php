@@ -4,19 +4,18 @@ declare(strict_types=1);
 
 namespace Shergela\Searchable\Traits;
 
-use App\Utils\RequestInput;
-use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use InvalidArgumentException;
 use Shergela\Searchable\Enums\ScalarType;
+use Shergela\Searchable\Requests\RequestInput;
 
 trait HasValidateInputs
 {
     protected function validateInputs(
         string $field,
-        Request $request,
-        ScalarType $scalarType = ScalarType::String
-    ): Carbon|int|float|string|null {
+        ScalarType $scalarType
+    ): Carbon|int|float|string|bool|null {
+        $request = $this->request();
         $keys = $request->keys();
 
         if (empty($keys)) {
@@ -38,6 +37,7 @@ trait HasValidateInputs
             ScalarType::Float => RequestInput::floatOrNull($request->float($field)),
             ScalarType::String => RequestInput::stringOrNull($request->string($field)),
             ScalarType::Date => RequestInput::dateOrNull($request->date($field)),
+            ScalarType::Bool => $request->has($field) ? $request->boolean($field) : null,
             default => null,
         };
     }

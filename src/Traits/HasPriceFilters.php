@@ -14,9 +14,9 @@ trait HasPriceFilters
         string $field = 'price',
         ?float $value = null,
         string $operator = '=',
-        ?Request $request = null
+        
     ): static {
-        $value = $this->parseFloat(field: $field, value: $value, request: $request);
+        $value = $this->parseFloat(field: $field, value: $value);
 
         return $this->applyNumericFilter(field: $field, value: $value, operator: $operator);
     }
@@ -24,16 +24,16 @@ trait HasPriceFilters
     public function priceGreaterThan(
         string $field = 'price',
         ?float $value = null,
-        ?Request $request = null
+        
     ): static {
-        $value = $this->parseFloat(field: $field, value: $value, request: $request);
+        $value = $this->parseFloat(field: $field, value: $value);
 
         return $this->applyNumericFilter(field: $field, value: $value, operator: '>');
     }
 
-    public function priceLessThan(string $field = 'price', ?float $value = null, ?Request $request = null): static
+    public function priceLessThan(string $field = 'price', ?float $value = null): static
     {
-        $value = $this->parseFloat(field: $field, value: $value, request: $request);
+        $value = $this->parseFloat(field: $field, value: $value);
 
         return $this->applyNumericFilter(field: $field, value: $value, operator: '<');
     }
@@ -42,13 +42,13 @@ trait HasPriceFilters
         string $field = 'price',
         ?float $from = null,
         ?float $to = null,
-        ?Request $request = null,
+        
         string $fromInput = 'from',
         string $toInput = 'to',
     ): static {
         if ($request !== null) {
-            $from = $this->parseFloat(field: $fromInput, value: $from, request: $request);
-            $to = $this->parseFloat(field: $toInput, value: $to, request: $request);
+            $from = $this->parseFloat(field: $fromInput, value: $from);
+            $to = $this->parseFloat(field: $toInput, value: $to);
         }
 
         return $this->applyBetween(field: $field, from: $from, to: $to);
@@ -58,13 +58,13 @@ trait HasPriceFilters
         string $field = 'price',
         ?float $from = null,
         ?float $to = null,
-        ?Request $request = null,
+        
         string $fromInput = 'from',
         string $toInput = 'to',
     ): static {
         if ($request !== null) {
-            $from = $this->parseFloat(field: $fromInput, value: $from, request: $request);
-            $to = $this->parseFloat(field: $toInput, value: $to, request: $request);
+            $from = $this->parseFloat(field: $fromInput, value: $from);
+            $to = $this->parseFloat(field: $toInput, value: $to);
         }
 
         return $this->applyBetween(field: $field, from: $from, to: $to, not: true);

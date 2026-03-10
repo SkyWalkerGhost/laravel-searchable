@@ -65,4 +65,9 @@ class RequestInput
 
         return $value === '' ? null : $value;
     }
+
+    public static function boolOrNull(bool $boolean): ?true
+    {
+        return $boolean ? true : null;
+    }
 }

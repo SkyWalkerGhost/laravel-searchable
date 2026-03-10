@@ -10,14 +10,16 @@
         }
     ],
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "illuminate/support": "^9.0|^10.0|^11.0|^12.0",
         "illuminate/database": "^9.0|^10.0|^11.0|^12.0",
-        "illuminate/validation": "^9.0|^10.0|^11.0|^12.0"
+        "illuminate/validation": "^9.0|^10.0|^11.0|^12.0",
+        "illuminate/http": "^9.0|^10.0|^11.0|^12.0",
+        "illuminate/pagination": "^9.0|^10.0|^11.0|^12.0"
     },
     "require-dev": {
-        "laravel/pint": "^1.7",
-        "phpunit/phpunit": "^10.0"
+        "laravel/pint": "^1.27.1",
+        "phpunit/phpunit": "^11.5.3"
     },
     "autoload": {
         "psr-4": {

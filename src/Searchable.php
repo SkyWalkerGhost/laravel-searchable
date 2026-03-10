@@ -7,6 +7,7 @@ namespace Shergela\Searchable;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Pagination\Cursor;
 use Illuminate\Pagination\CursorPaginator;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -19,11 +20,13 @@ use Shergela\Searchable\Traits\HasDateFilters;
 use Shergela\Searchable\Traits\HasEnumFilters;
 use Shergela\Searchable\Traits\HasFullTextSearch;
 use Shergela\Searchable\Traits\HasIdFilters;
+use Shergela\Searchable\Traits\HasIdsFilters;
 use Shergela\Searchable\Traits\HasParseValue;
 use Shergela\Searchable\Traits\HasPriceFilters;
 use Shergela\Searchable\Traits\HasRelationFilters;
 use Shergela\Searchable\Traits\HasTextFilters;
 use Shergela\Searchable\Traits\HasTimeFilters;
+use Shergela\Searchable\Traits\HasUuidFilter;
 use Shergela\Searchable\Traits\HasValidateInputs;
 
 abstract class Searchable
@@ -35,14 +38,16 @@ abstract class Searchable
     use HasEnumFilters;
     use HasFullTextSearch;
     use HasIdFilters;
-    use HasParseValue;
+    use HasIdsFilters;
     use HasPriceFilters;
     use HasRelationFilters;
     use HasTextFilters;
     use HasTimeFilters;
+    use HasUuidFilter;
     use HasValidateInputs;
+    use HasParseValue;
 
-    protected const array SEARCH_OPERATORS = ['ilike', 'like'];
+    protected const array LIKE_OPERATORS = ['ilike', 'like'];
 
     protected Builder $builder;
 
@@ -58,9 +63,27 @@ abstract class Searchable
      */
     abstract protected function model(): Builder;
 
+    protected function request(): Request
+    {
+        /** @var Request $request */
+        $request = app(Request::class);
+
+        return $request;
+    }
+
     protected function getDatabaseDriver(): string
     {
         return DB::getDriverName();
+    }
+
+    /**
+     * Returns the appropriate SQL LIKE operator for the current database.
+     *
+     * @return string 'like' or 'ilike' depending on a DB driver
+     */
+    protected function getDatabaseLikeOperator(): string
+    {
+        return $this->getDatabaseDriver() === 'pgsql' ? 'ilike' : 'like';
     }
 
     /**
@@ -98,9 +121,13 @@ abstract class Searchable
             return $this;
         }
 
-        in_array($operator, static::SEARCH_OPERATORS)
-            ? $this->builder->where($field, $operator, "%$value%")
-            : $this->builder->where($field, $operator, $value);
+        $isLike = in_array(needle: $operator, haystack: static::LIKE_OPERATORS, strict: true);
+
+        $this->builder->where(
+            column: $field,
+            operator: $isLike ? $this->getDatabaseLikeOperator() : $operator,
+            value: $isLike ? "%$value%" : $value
+        );
 
         return $this;
     }

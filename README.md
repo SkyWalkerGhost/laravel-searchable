@@ -183,7 +183,7 @@ Each filter method has a **predefined default field name** that it expects in bo
 
 ```php
 Search::query(Payment::query())
-    ->amount(field: 'total_amount', request: $request);
+    ->amount(field: 'total_amount');
 ```
 
 Example request:
