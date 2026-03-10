@@ -50,10 +50,10 @@ $payments = Search::query(Payment::query())
     ->ignoreMissingFields()
     ->with(['payable', 'user'])
     ->id(value: $request->integer('payment_id', null))
-    ->userId(request: $request)
-    ->status(request: $request)
+    ->userId()
+    ->status()
     ->validate()
-    ->amount(request: $request)
+    ->amount()
     ->orderByDesc();
 ```
 
@@ -71,6 +71,11 @@ Validation can be defined in **two ways**:
 # Using the `Validatable` Interface
 
 Your model may implement the `Validatable` interface.
+
+```php
+use Shergela\Searchable\Contracts\Validatable;
+```
+
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -115,13 +120,13 @@ By default, when validation fails, Laravel redirects back to the previous page. 
 
 ```php
 Search::query(Payment::query())
-    ->redirectTo(url: '/payments')
+    ->redirectTo(url: '/payments') // or route('payments.index')
     ->validate([
         'amount' => ['nullable', 'numeric'],
         'status' => ['nullable', 'string'],
     ])
-    ->amount(request: $request)
-    ->status(request: $request)
+    ->amount()
+    ->status()
     ->orderByDesc();
 ```
 
@@ -234,8 +239,8 @@ Calling `ignoreMissingFields()` instructs the package to **skip any filter whose
 ```php
 Search::query(Payment::query())
     ->ignoreMissingFields()  // <-- call this first
-    ->status(request: $request)
-    ->amount(request: $request)
+    ->status()
+    ->amount()
     ->orderByDesc();
 ```
 
@@ -248,7 +253,6 @@ Without `ignoreMissingFields()`, a disabled or absent field could still be evalu
 The `fullTextSearch()` method performs an optimized text search across one or more columns. It automatically detects the database driver and applies the most appropriate search strategy.
 
 ## Supported Drivers
-
 | Driver | Strategy |
 |---|---|
 | `pgsql` | `tsvector` + `plainto_tsquery` |
@@ -456,10 +460,10 @@ $payments = Search::query(Payment::query())
     ->ignoreMissingFields()
     ->with(['payable', 'user'])
     ->id(value: $request->integer('payment_id', null))
-    ->userId(request: $request)
-    ->status(request: $request)
+    ->userId()
+    ->status()
     ->validate()
-    ->amount(request: $request)
+    ->amount()
     ->orderByDesc();
 ```
 
