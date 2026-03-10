@@ -111,7 +111,7 @@ $payments = Search::query(Payment::query())
         'amount' => ['nullable', 'numeric'],
         'status' => ['nullable', 'string'],
     ])
-    ->amount(request: $request);
+    ->amount();
 ```
 
 # Redirect After Validation Failure
