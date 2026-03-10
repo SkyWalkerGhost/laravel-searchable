@@ -39,13 +39,13 @@ abstract class Searchable
     use HasFullTextSearch;
     use HasIdFilters;
     use HasIdsFilters;
+    use HasParseValue;
     use HasPriceFilters;
     use HasRelationFilters;
     use HasTextFilters;
     use HasTimeFilters;
     use HasUuidFilter;
     use HasValidateInputs;
-    use HasParseValue;
 
     protected const array LIKE_OPERATORS = ['ilike', 'like'];
 
@@ -84,6 +84,17 @@ abstract class Searchable
     protected function getDatabaseLikeOperator(): string
     {
         return $this->getDatabaseDriver() === 'pgsql' ? 'ilike' : 'like';
+    }
+
+    protected function getLikeOperator(string $operator): string
+    {
+        return in_array(
+            needle: $operator,
+            haystack: static::LIKE_OPERATORS,
+            strict: true
+        )
+            ? $this->getDatabaseLikeOperator()
+            : $operator;
     }
 
     /**

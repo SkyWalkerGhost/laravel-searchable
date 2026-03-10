@@ -152,13 +152,14 @@ This allows the filter to work with requests, manual values, or custom input nam
 
 ---
 
-# 1. Passing the Request
+# 1. Automatic Value Detection from Field
 
-The filter will automatically read the value from the request using the **field name**.
-
+Filters will now automatically retrieve the value 
+based on the field name. You no longer need to pass 
+the request manually.
 ```php
 Search::query(Payment::query())
-    ->amount(request: $request);
+    ->amount(); // the field name is 'amount'
 ```
 
 Example request:
@@ -175,10 +176,14 @@ WHERE amount = 100
 
 ---
 
-# 2. Passing Field Name + Request
+# 2. Passing a Custom Field Name
 
-Each filter method has a **predefined default field name** that it expects in both the request input and the database column. If your input name and database column name match but differ from the default, pass `field` explicitly alongside `request`.
-
+Each filter method has a default field name it 
+uses to read the value from the request 
+and the corresponding database column. 
+If your request input name or database column 
+differs from the default, 
+you can pass a custom field.
 > **Important:** The `field` value must match **both** the request input name and the database column name — they must be identical.
 
 ```php

@@ -13,9 +13,7 @@ trait HasTextFilters
         string $field,
         ?string $value = null,
         string $operator = '=',
-
     ): static {
-
         $value = $this->parseString(field: $field, value: $value);
 
         if ($value === null) {
@@ -30,7 +28,7 @@ trait HasTextFilters
         ?string $value = null,
         string $operator = 'ilike',
     ): static {
-        return $this->text(field: $field, value: $value, operator: $operator);
+        return $this->text(field: $field, value: $value, operator: $this->getLikeOperator(operator: $operator));
     }
 
     public function firstName(
@@ -38,7 +36,7 @@ trait HasTextFilters
         ?string $value = null,
         string $operator = 'ilike',
     ): static {
-        return $this->name(field: $field, value: $value, operator: $operator);
+        return $this->name(field: $field, value: $value, operator: $this->getLikeOperator(operator: $operator));
     }
 
     public function lastName(
@@ -46,16 +44,15 @@ trait HasTextFilters
         ?string $value = null,
         string $operator = 'ilike',
     ): static {
-        return $this->name(field: $field, value: $value, operator: $operator);
+        return $this->name(field: $field, value: $value, operator: $this->getLikeOperator(operator: $operator));
     }
 
     public function nickname(
         string $field = 'nickname',
         ?string $value = null,
         string $operator = 'ilike',
-
     ): static {
-        return $this->name(field: $field, value: $value, operator: $operator);
+        return $this->name(field: $field, value: $value, operator: $this->getLikeOperator(operator: $operator));
     }
 
     public function email(
@@ -63,7 +60,7 @@ trait HasTextFilters
         ?string $value = null,
         string $operator = 'ilike',
     ): static {
-        return $this->name(field: $field, value: $value, operator: $operator);
+        return $this->name(field: $field, value: $value, operator: $this->getLikeOperator(operator: $operator));
     }
 
     public function phone(
@@ -71,7 +68,7 @@ trait HasTextFilters
         ?string $value = null,
         string $operator = 'ilike',
     ): static {
-        return $this->name(field: $field, value: $value, operator: $operator);
+        return $this->name(field: $field, value: $value, operator: $this->getLikeOperator(operator: $operator));
     }
 
     public function country(

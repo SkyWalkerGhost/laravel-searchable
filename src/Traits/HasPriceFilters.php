@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shergela\Searchable\Traits;
 
-use Illuminate\Http\Request;
-
 trait HasPriceFilters
 {
     use HasNumericFilters;
@@ -14,7 +12,6 @@ trait HasPriceFilters
         string $field = 'price',
         ?float $value = null,
         string $operator = '=',
-        
     ): static {
         $value = $this->parseFloat(field: $field, value: $value);
 
@@ -24,7 +21,6 @@ trait HasPriceFilters
     public function priceGreaterThan(
         string $field = 'price',
         ?float $value = null,
-        
     ): static {
         $value = $this->parseFloat(field: $field, value: $value);
 
@@ -42,14 +38,11 @@ trait HasPriceFilters
         string $field = 'price',
         ?float $from = null,
         ?float $to = null,
-        
         string $fromInput = 'from',
         string $toInput = 'to',
     ): static {
-        if ($request !== null) {
-            $from = $this->parseFloat(field: $fromInput, value: $from);
-            $to = $this->parseFloat(field: $toInput, value: $to);
-        }
+        $from = $this->parseFloat(field: $fromInput, value: $from);
+        $to = $this->parseFloat(field: $toInput, value: $to);
 
         return $this->applyBetween(field: $field, from: $from, to: $to);
     }
@@ -58,14 +51,11 @@ trait HasPriceFilters
         string $field = 'price',
         ?float $from = null,
         ?float $to = null,
-        
         string $fromInput = 'from',
         string $toInput = 'to',
     ): static {
-        if ($request !== null) {
-            $from = $this->parseFloat(field: $fromInput, value: $from);
-            $to = $this->parseFloat(field: $toInput, value: $to);
-        }
+        $from = $this->parseFloat(field: $fromInput, value: $from);
+        $to = $this->parseFloat(field: $toInput, value: $to);
 
         return $this->applyBetween(field: $field, from: $from, to: $to, not: true);
     }
