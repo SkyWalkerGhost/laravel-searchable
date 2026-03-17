@@ -21,6 +21,7 @@ use Shergela\Searchable\Traits\HasEnumFilters;
 use Shergela\Searchable\Traits\HasFullTextSearch;
 use Shergela\Searchable\Traits\HasIdFilters;
 use Shergela\Searchable\Traits\HasIdsFilters;
+use Shergela\Searchable\Traits\HasLocationFilters;
 use Shergela\Searchable\Traits\HasParseValue;
 use Shergela\Searchable\Traits\HasPriceFilters;
 use Shergela\Searchable\Traits\HasRelationFilters;
@@ -45,6 +46,7 @@ abstract class Searchable
     use HasTextFilters;
     use HasTimeFilters;
     use HasUuidFilter;
+    use HasLocationFilters;
     use HasValidateInputs;
 
     protected const array LIKE_OPERATORS = ['ilike', 'like'];

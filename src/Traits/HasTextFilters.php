@@ -71,22 +71,6 @@ trait HasTextFilters
         return $this->name(field: $field, value: $value, operator: $this->getLikeOperator(operator: $operator));
     }
 
-    public function country(
-        string $field = 'country',
-        ?string $value = null,
-        string $operator = '=',
-    ): static {
-        return $this->text(field: $field, value: $value, operator: $operator);
-    }
-
-    public function city(
-        string $field = 'city',
-        ?string $value = null,
-        string $operator = '=',
-    ): static {
-        return $this->text(field: $field, value: $value, operator: $operator);
-    }
-
     public function type(
         string $field = 'type',
         ?string $value = null,
