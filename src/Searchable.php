@@ -13,18 +13,22 @@ use Illuminate\Pagination\CursorPaginator;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 use Shergela\Searchable\Traits\HasAmountFilters;
 use Shergela\Searchable\Traits\HasBalanceFilters;
 use Shergela\Searchable\Traits\HasBooleanFilters;
 use Shergela\Searchable\Traits\HasDateFilters;
+use Shergela\Searchable\Traits\HasDeviceFilters;
 use Shergela\Searchable\Traits\HasEnumFilters;
 use Shergela\Searchable\Traits\HasFullTextSearch;
 use Shergela\Searchable\Traits\HasIdFilters;
 use Shergela\Searchable\Traits\HasIdsFilters;
 use Shergela\Searchable\Traits\HasLocationFilters;
 use Shergela\Searchable\Traits\HasParseValue;
+use Shergela\Searchable\Traits\HasPolymorphicFilters;
 use Shergela\Searchable\Traits\HasPriceFilters;
 use Shergela\Searchable\Traits\HasRelationFilters;
+use Shergela\Searchable\Traits\HasSoftDeletesFilters;
 use Shergela\Searchable\Traits\HasTextFilters;
 use Shergela\Searchable\Traits\HasTimeFilters;
 use Shergela\Searchable\Traits\HasUuidFilter;
@@ -36,14 +40,17 @@ abstract class Searchable
     use HasBalanceFilters;
     use HasBooleanFilters;
     use HasDateFilters;
+    use HasDeviceFilters;
     use HasEnumFilters;
     use HasFullTextSearch;
     use HasIdFilters;
     use HasIdsFilters;
     use HasLocationFilters;
     use HasParseValue;
+    use HasPolymorphicFilters;
     use HasPriceFilters;
     use HasRelationFilters;
+    use HasSoftDeletesFilters;
     use HasTextFilters;
     use HasTimeFilters;
     use HasUuidFilter;
@@ -141,6 +148,23 @@ abstract class Searchable
             operator: $isLike ? $this->getDatabaseLikeOperator() : $operator,
             value: $isLike ? "%$value%" : $value
         );
+
+        return $this;
+    }
+
+    /**
+     * Apply a given callback to the query builder instance.
+     *
+     * @param  Closure  $callback  A callback function that receives the query builder as an argument.
+     * @return static Returns the current instance for method chaining.
+     */
+    public function filter(Closure $callback): static
+    {
+        if (! is_callable($callback)) {
+            throw new InvalidArgumentException(message: 'The callback must be a valid callable.');
+        }
+
+        $callback($this->builder);
 
         return $this;
     }

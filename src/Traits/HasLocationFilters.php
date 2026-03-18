@@ -302,9 +302,4 @@ trait HasLocationFilters
     {
         return $this->text(field: $field, value: $value, operator: $operator);
     }
-
-    public function ipAddressLike(string $field = 'ip_address', ?string $value = null): static
-    {
-        return $this->searchTextLike(field: $field, value: $value);
-    }
 }

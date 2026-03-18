@@ -145,6 +145,11 @@ trait HasTextFilters
         return $this->text(field: $field, value: $value, operator: $operator);
     }
 
+    public function event(?string $value = null, string $operator = '='): static
+    {
+        return $this->text(field: 'event', value: $value, operator: $this->getLikeOperator(operator: $operator));
+    }
+
     public function whereIn(
         string $field,
         Collection|array|null $values = null
