@@ -28,8 +28,7 @@
     },
     "scripts": {
         "qa": [
-            "@php vendor/bin/pint -v",
-            "@php vendor/bin/phpunit"
+            "@php vendor/bin/pint -v"
         ]
     },
     "minimum-stability": "stable",

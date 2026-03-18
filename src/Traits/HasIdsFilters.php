@@ -8,6 +8,8 @@ use Illuminate\Support\Collection;
 
 trait HasIdsFilters
 {
+    use HasIdsFilters2;
+
     public function ids(string $field = 'id', Collection|array|null $values = null): static
     {
         if ($values === null
@@ -26,130 +28,171 @@ trait HasIdsFilters
         return $this;
     }
 
-    public function userIds(Collection|array|null $values = null, string $field = 'user_id'): static
+    // ==================== Users ====================
+
+    public function userIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'user_id', values: $values);
     }
 
-    public function walletIds(Collection|array|null $values = null, string $field = 'wallet_id'): static
+    public function adminIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'admin_id', values: $values);
     }
 
-    public function paymentIds(Collection|array|null $values = null, string $field = 'payment_id'): static
+    public function moderatorIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'moderator_id', values: $values);
     }
 
-    public function transactionIds(Collection|array|null $values = null, string $field = 'transaction_id'): static
+    public function managerIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'manager_id', values: $values);
     }
 
-    public function productIds(Collection|array|null $values = null, string $field = 'product_id'): static
+    public function customerIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'customer_id', values: $values);
     }
 
-    public function orderIds(Collection|array|null $values = null, string $field = 'order_id'): static
+    public function subscriberIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'subscriber_id', values: $values);
     }
 
-    public function invoiceIds(Collection|array|null $values = null, string $field = 'invoice_id'): static
+    public function visitorIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'visitor_id', values: $values);
     }
 
-    public function couponIds(Collection|array|null $values = null, string $field = 'coupon_id'): static
+    public function ownerIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'owner_id', values: $values);
     }
 
-    public function orderItemIds(Collection|array|null $values = null, string $field = 'order_item_id'): static
+    // ==================== Commerce ====================
+
+    public function walletIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'wallet_id', values: $values);
     }
 
-    public function postIds(Collection|array|null $values = null, string $field = 'post_id'): static
+    public function paymentIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'payment_id', values: $values);
     }
 
-    public function commentIds(Collection|array|null $values = null, string $field = 'comment_id'): static
+    public function transactionIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'transaction_id', values: $values);
     }
 
-    public function tagIds(Collection|array|null $values = null, string $field = 'tag_id'): static
+    public function orderIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'order_id', values: $values);
     }
 
-    public function categoryIds(Collection|array|null $values = null, string $field = 'category_id'): static
+    public function orderItemIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'order_item_id', values: $values);
     }
 
-    public function roleIds(Collection|array|null $values = null, string $field = 'role_id'): static
+    public function invoiceIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'invoice_id', values: $values);
     }
 
-    public function permissionIds(Collection|array|null $values = null, string $field = 'permission_id'): static
+    public function couponIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'coupon_id', values: $values);
     }
 
-    public function marketIds(Collection|array|null $values = null, string $field = 'market_id'): static
+    public function cartIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'cart_id', values: $values);
     }
 
-    public function brandIds(Collection|array|null $values = null, string $field = 'brand_id'): static
+    public function shopIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'shop_id', values: $values);
     }
 
-    public function betIds(Collection|array|null $values = null, string $field = 'bet_id'): static
+    public function marketIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'market_id', values: $values);
     }
 
-    public function cartIds(Collection|array|null $values = null, string $field = 'cart_id'): static
+    public function betIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'bet_id', values: $values);
     }
 
-    public function addressIds(Collection|array|null $values = null, string $field = 'address_id'): static
+    // ==================== Products ====================
+
+    public function productIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'product_id', values: $values);
     }
 
-    public function attributeIds(Collection|array|null $values = null, string $field = 'attribute_id'): static
+    public function brandIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'brand_id', values: $values);
     }
 
-    public function attributeValueIds(
-        string $field = 'attribute_value_id',
-        Collection|array|null $values = null
-    ): static {
-        return $this->ids(field: $field, values: $values);
+    public function attributeIds(Collection|array|null $values = null): static
+    {
+        return $this->ids(field: 'attribute_id', values: $values);
     }
 
-    public function visitorIds(Collection|array|null $values = null, string $field = 'visitor_id'): static
+    public function attributeValueIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'attribute_value_id', values: $values);
     }
 
-    public function customerIds(Collection|array|null $values = null, string $field = 'customer_id'): static
+    public function addressIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'address_id', values: $values);
     }
 
-    public function blogIds(Collection|array|null $values = null, string $field = 'blog_id'): static
+    // ==================== Content ====================
+
+    public function postIds(Collection|array|null $values = null): static
     {
-        return $this->ids(field: $field, values: $values);
+        return $this->ids(field: 'post_id', values: $values);
+    }
+
+    public function commentIds(Collection|array|null $values = null): static
+    {
+        return $this->ids(field: 'comment_id', values: $values);
+    }
+
+    public function tagIds(Collection|array|null $values = null): static
+    {
+        return $this->ids(field: 'tag_id', values: $values);
+    }
+
+    public function categoryIds(Collection|array|null $values = null): static
+    {
+        return $this->ids(field: 'category_id', values: $values);
+    }
+
+    public function blogIds(Collection|array|null $values = null): static
+    {
+        return $this->ids(field: 'blog_id', values: $values);
+    }
+
+    public function pageIds(Collection|array|null $values = null): static
+    {
+        return $this->ids(field: 'page_id', values: $values);
+    }
+
+    public function menuIds(Collection|array|null $values = null): static
+    {
+        return $this->ids(field: 'menu_id', values: $values);
+    }
+
+    public function subjectIds(Collection|array|null $values = null): static
+    {
+        return $this->ids(field: 'subject_id', values: $values);
     }
 }

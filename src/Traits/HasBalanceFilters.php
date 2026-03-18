@@ -8,38 +8,32 @@ trait HasBalanceFilters
 {
     use HasNumericFilters;
 
-    public function balance(
-        string $field = 'balance',
-        ?float $value = null,
-        string $operator = '=',
-    ): static {
-        $value = $this->parseFloat(field: $field, value: $value);
+    public function balance(?float $value = null, string $operator = '='): static
+    {
+        $value = $this->parseFloat(field: 'balance', value: $value);
 
         if ($value === null) {
             return $this;
         }
 
-        return $this->applyNumericFilter(field: $field, value: $value, operator: $operator);
+        return $this->applyNumericFilter(field: 'balance', value: $value, operator: $operator);
     }
 
-    public function balanceGreaterThan(
-        string $field = 'balance',
-        ?float $value = null,
-    ): static {
-        $value = $this->parseFloat(field: $field, value: $value);
-
-        return $this->applyNumericFilter(field: $field, value: $value, operator: '>');
-    }
-
-    public function balanceLessThan(string $field = 'balance', ?float $value = null): static
+    public function balanceGreaterThan(?float $value = null): static
     {
-        $value = $this->parseFloat(field: $field, value: $value);
+        $value = $this->parseFloat(field: 'balance', value: $value);
 
-        return $this->applyNumericFilter(field: $field, value: $value, operator: '<');
+        return $this->applyNumericFilter(field: 'balance', value: $value, operator: '>');
+    }
+
+    public function balanceLessThan(?float $value = null): static
+    {
+        $value = $this->parseFloat(field: 'balance', value: $value);
+
+        return $this->applyNumericFilter(field: 'balance', value: $value, operator: '<');
     }
 
     public function balanceBetween(
-        string $field = 'balance',
         ?float $from = null,
         ?float $to = null,
         string $fromInput = 'from',
@@ -48,11 +42,10 @@ trait HasBalanceFilters
         $from = $this->parseFloat(field: $fromInput, value: $from);
         $to = $this->parseFloat(field: $toInput, value: $to);
 
-        return $this->applyBetween(field: $field, from: $from, to: $to);
+        return $this->applyBetween(field: 'balance', from: $from, to: $to);
     }
 
     public function balanceNotBetween(
-        string $field = 'balance',
         ?float $from = null,
         ?float $to = null,
         string $fromInput = 'from',
@@ -61,33 +54,33 @@ trait HasBalanceFilters
         $from = $this->parseFloat(field: $fromInput, value: $from);
         $to = $this->parseFloat(field: $toInput, value: $to);
 
-        return $this->applyBetween(field: $field, from: $from, to: $to, not: true);
+        return $this->applyBetween(field: 'balance', from: $from, to: $to, not: true);
     }
 
-    public function balanceNull(string|array $field = 'balance', string $boolean = 'and', bool $not = false): static
+    public function balanceNull(string $boolean = 'and', bool $not = false): static
     {
-        $this->builder->whereNull($field, $boolean, $not);
+        $this->builder->whereNull('balance', $boolean, $not);
 
         return $this;
     }
 
-    public function balanceNotNull(string|array $field = 'balance', string $boolean = 'and'): static
+    public function balanceNotNull(string $boolean = 'and'): static
     {
-        $this->builder->whereNotNull($field, $boolean);
+        $this->builder->whereNotNull('balance', $boolean);
 
         return $this;
     }
 
-    public function highestBalance(string $field = 'balance'): static
+    public function highestBalance(): static
     {
-        $this->builder->orderBy($field, 'DESC');
+        $this->builder->orderBy('balance', 'DESC');
 
         return $this;
     }
 
-    public function lowestBalance(string $field = 'balance'): static
+    public function lowestBalance(): static
     {
-        $this->builder->orderBy($field, 'ASC');
+        $this->builder->orderBy('balance', 'ASC');
 
         return $this;
     }

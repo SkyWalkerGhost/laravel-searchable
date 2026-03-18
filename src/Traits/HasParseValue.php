@@ -12,6 +12,7 @@ trait HasParseValue
 {
     /**
      * @template T of int|float|string|bool|null
+     *
      * @param  T|null  $value
      */
     protected function parseValue(

@@ -86,9 +86,9 @@ trait HasLocationFilters
         return $this->searchTextLike(field: $field, value: $value);
     }
 
-    public function street(string $field = 'street', ?string $value = null, string $operator = '='): static
+    public function street(string $field = 'street', ?string $value = null, string $operator = 'ilike'): static
     {
-        return $this->text(field: $field, value: $value, operator: $operator);
+        return $this->text(field: $field, value: $value, operator: $this->getLikeOperator(operator: $operator));
     }
 
     public function streetLike(string $field = 'street', ?string $value = null): static
@@ -98,24 +98,14 @@ trait HasLocationFilters
 
     // ─── Address / House / Postal ────────────────────────────────────────────────
 
-    public function address(string $field = 'address', ?string $value = null, string $operator = '='): static
+    public function address(string $field = 'address', ?string $value = null, string $operator = 'ilike'): static
     {
-        return $this->text(field: $field, value: $value, operator: $operator);
-    }
-
-    public function addressLike(string $field = 'address', ?string $value = null): static
-    {
-        return $this->searchTextLike(field: $field, value: $value);
+        return $this->text(field: $field, value: $value, operator: $this->getLikeOperator(operator: $operator));
     }
 
     public function houseNumber(string $field = 'house_number', ?string $value = null, string $operator = '='): static
     {
         return $this->text(field: $field, value: $value, operator: $operator);
-    }
-
-    public function houseNumberLike(string $field = 'house_number', ?string $value = null): static
-    {
-        return $this->searchTextLike(field: $field, value: $value);
     }
 
     public function postalCode(string $field = 'postal_code', ?string $value = null, string $operator = '='): static

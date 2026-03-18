@@ -40,13 +40,13 @@ abstract class Searchable
     use HasFullTextSearch;
     use HasIdFilters;
     use HasIdsFilters;
+    use HasLocationFilters;
     use HasParseValue;
     use HasPriceFilters;
     use HasRelationFilters;
     use HasTextFilters;
     use HasTimeFilters;
     use HasUuidFilter;
-    use HasLocationFilters;
     use HasValidateInputs;
 
     protected const array LIKE_OPERATORS = ['ilike', 'like'];

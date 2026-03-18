@@ -11,6 +11,7 @@ trait HasTimeFilters
 {
     /**
      * Apply a single time filter.
+     *
      * @throws Exception
      */
     protected function applyTimeFilter(
@@ -31,7 +32,8 @@ trait HasTimeFilters
     }
 
     /**
-     * Apply a time range filter (from/to). Nullable boundaries allowed.
+     * Apply a time range filter (from/to). Nullable boundaries are allowed.
+     *
      * @throws Exception
      */
     protected function applyTimeRange(

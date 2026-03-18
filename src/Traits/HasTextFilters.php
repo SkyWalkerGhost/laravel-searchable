@@ -31,60 +31,106 @@ trait HasTextFilters
         return $this->text(field: $field, value: $value, operator: $this->getLikeOperator(operator: $operator));
     }
 
-    public function firstName(
-        string $field = 'first_name',
-        ?string $value = null,
-        string $operator = 'ilike',
-    ): static {
-        return $this->name(field: $field, value: $value, operator: $this->getLikeOperator(operator: $operator));
+    public function username(?string $value = null, string $operator = 'ilike'): static
+    {
+        return $this->text(field: 'username', value: $value, operator: $this->getLikeOperator(operator: $operator));
     }
 
-    public function lastName(
-        string $field = 'last_name',
-        ?string $value = null,
-        string $operator = 'ilike',
-    ): static {
-        return $this->name(field: $field, value: $value, operator: $this->getLikeOperator(operator: $operator));
+    public function description(?string $value = null, string $operator = 'ilike'): static
+    {
+        return $this->text(field: 'description', value: $value, operator: $this->getLikeOperator(operator: $operator));
     }
 
-    public function nickname(
-        string $field = 'nickname',
-        ?string $value = null,
-        string $operator = 'ilike',
-    ): static {
-        return $this->name(field: $field, value: $value, operator: $this->getLikeOperator(operator: $operator));
+    public function slug(?string $value = null, string $operator = 'ilike'): static
+    {
+        return $this->text(field: 'slug', value: $value, operator: $this->getLikeOperator(operator: $operator));
     }
 
-    public function email(
-        string $field = 'email',
-        ?string $value = null,
-        string $operator = 'ilike',
-    ): static {
-        return $this->name(field: $field, value: $value, operator: $this->getLikeOperator(operator: $operator));
+    public function content(?string $value = null, string $operator = 'ilike'): static
+    {
+        return $this->text(field: 'content', value: $value, operator: $this->getLikeOperator(operator: $operator));
     }
 
-    public function phone(
-        string $field = 'phone',
-        ?string $value = null,
-        string $operator = 'ilike',
-    ): static {
-        return $this->name(field: $field, value: $value, operator: $this->getLikeOperator(operator: $operator));
+    public function meta(?string $value = null, string $operator = 'ilike'): static
+    {
+        return $this->text(field: 'meta', value: $value, operator: $this->getLikeOperator(operator: $operator));
+    }
+
+    public function notes(?string $value = null, string $operator = 'ilike'): static
+    {
+        return $this->text(field: 'notes', value: $value, operator: $this->getLikeOperator(operator: $operator));
+    }
+
+    public function tags(?string $value = null, string $operator = 'ilike'): static
+    {
+        return $this->text(field: 'tags', value: $value, operator: $this->getLikeOperator(operator: $operator));
+    }
+
+    public function bio(?string $value = null, string $operator = 'ilike'): static
+    {
+        return $this->text(field: 'bio', value: $value, operator: $this->getLikeOperator(operator: $operator));
+    }
+
+    public function title(?string $value = null, string $operator = 'ilike'): static
+    {
+        return $this->text(field: 'title', value: $value, operator: $this->getLikeOperator(operator: $operator));
+    }
+
+    public function firstName(?string $value = null, string $operator = 'ilike'): static
+    {
+        return $this->text(field: 'first_name', value: $value, operator: $this->getLikeOperator(operator: $operator));
+    }
+
+    public function lastName(?string $value = null, string $operator = 'ilike'): static
+    {
+        return $this->text(field: 'last_name', value: $value, operator: $this->getLikeOperator(operator: $operator));
+    }
+
+    public function fullName(?string $value = null, string $operator = 'ilike'): static
+    {
+        return $this->text(field: 'full_name', value: $value, operator: $this->getLikeOperator(operator: $operator));
+    }
+
+    public function gender(?string $value = null, string $operator = '='): static
+    {
+        return $this->text(field: 'gender', value: $value, operator: $this->getLikeOperator(operator: $operator));
+    }
+
+    public function nickname(?string $value = null, string $operator = 'ilike'): static
+    {
+        return $this->text(field: 'nickname', value: $value, operator: $this->getLikeOperator(operator: $operator));
+    }
+
+    public function email(?string $value = null, string $operator = 'ilike'): static
+    {
+        return $this->text(field: 'email', value: $value, operator: $this->getLikeOperator(operator: $operator));
+    }
+
+    public function phone(?string $value = null, string $operator = 'ilike'): static
+    {
+        return $this->text(field: 'phone', value: $value, operator: $this->getLikeOperator(operator: $operator));
     }
 
     public function type(
-        string $field = 'type',
-        ?string $value = null,
+        BackedEnum|string|null $value = null,
         string $operator = '=',
     ): static {
-        return $this->text(field: $field, value: $value, operator: $operator);
+        if ($value instanceof BackedEnum) {
+            $value = $value->value;
+        }
+
+        return $this->text(field: 'type', value: $value, operator: $operator);
     }
 
     public function status(
-        string $field = 'status',
-        ?string $value = null,
+        BackedEnum|string|null $value = null,
         string $operator = '=',
     ): static {
-        return $this->text(field: $field, value: $value, operator: $operator);
+        if ($value instanceof BackedEnum) {
+            $value = $value->value;
+        }
+
+        return $this->text(field: 'status', value: $value, operator: $operator);
     }
 
     public function role(
@@ -96,13 +142,7 @@ trait HasTextFilters
             $value = $value->value;
         }
 
-        $value = $this->parseString(field: $field, value: $value);
-
-        if ($value === null) {
-            return $this;
-        }
-
-        return $this->search(field: $field, operator: $operator, value: $value);
+        return $this->text(field: $field, value: $value, operator: $operator);
     }
 
     public function whereIn(
