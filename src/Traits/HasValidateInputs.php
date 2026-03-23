@@ -35,13 +35,13 @@ trait HasValidateInputs
         /**
          * If the field is not in the request, return null.
          */
-        if (! $request->has($field)) {
+        if (! $request->filled($field)) {
             return null;
         }
 
         return match ($scalarType) {
             ScalarType::Int => RequestInput::intOrNull($request->integer($field)),
-            ScalarType::Float => RequestInput::floatOrNull($request->float($field)),
+            ScalarType::Float => RequestInput::floatOrNull(0.0000),
             ScalarType::String => RequestInput::stringOrNull($request->string($field)),
             ScalarType::Date => RequestInput::dateOrNull($request->date($field)),
             ScalarType::Bool => $request->has($field) ? $request->boolean($field) : null,

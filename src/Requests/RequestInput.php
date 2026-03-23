@@ -9,14 +9,14 @@ use Illuminate\Support\Stringable;
 
 class RequestInput
 {
-    public static function intOrNull(int $value): int
+    public static function intOrNull(int $id): ?int
     {
-        return $value;
+        return $id === 0 ? null : $id;
     }
 
-    public static function floatOrNull(int|float $value): float
+    public static function floatOrNull(float $value): ?float
     {
-        return (float) $value;
+        return $value === 0.0 ? null : $value;
     }
 
     public static function stringOrNull(Stringable|string|null $value): ?string
@@ -47,10 +47,5 @@ class RequestInput
         }
 
         return $value === '' ? null : $value;
-    }
-
-    public static function boolOrNull(bool $boolean): ?true
-    {
-        return $boolean ? true : null;
     }
 }
