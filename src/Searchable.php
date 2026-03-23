@@ -29,6 +29,7 @@ use Shergela\Searchable\Traits\HasPolymorphicFilters;
 use Shergela\Searchable\Traits\HasPriceFilters;
 use Shergela\Searchable\Traits\HasRelationFilters;
 use Shergela\Searchable\Traits\HasSoftDeletesFilters;
+use Shergela\Searchable\Traits\HasStatusFilters;
 use Shergela\Searchable\Traits\HasTextFilters;
 use Shergela\Searchable\Traits\HasTimeFilters;
 use Shergela\Searchable\Traits\HasUuidFilter;
@@ -49,6 +50,7 @@ abstract class Searchable
     use HasParseValue;
     use HasPolymorphicFilters;
     use HasPriceFilters;
+    use HasStatusFilters;
     use HasRelationFilters;
     use HasSoftDeletesFilters;
     use HasTextFilters;
