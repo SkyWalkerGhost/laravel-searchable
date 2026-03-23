@@ -41,7 +41,7 @@ trait HasValidateInputs
 
         return match ($scalarType) {
             ScalarType::Int => RequestInput::intOrNull($request->integer($field)),
-            ScalarType::Float => RequestInput::floatOrNull(0.0000),
+            ScalarType::Float => RequestInput::floatOrNull($request->float($field)),
             ScalarType::String => RequestInput::stringOrNull($request->string($field)),
             ScalarType::Date => RequestInput::dateOrNull($request->date($field)),
             ScalarType::Bool => $request->has($field) ? $request->boolean($field) : null,
