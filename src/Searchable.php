@@ -217,7 +217,6 @@ abstract class Searchable
         array $columns = ['*'],
         string $pageName = 'page',
         ?int $page = null,
-        Closure|int|null $total = null
     ): LengthAwarePaginator {
         return $this->builder
             ->paginate(
@@ -225,7 +224,6 @@ abstract class Searchable
                 columns: $columns,
                 pageName: $pageName,
                 page: $page,
-                total: $total
             )
             ->withQueryString();
     }
