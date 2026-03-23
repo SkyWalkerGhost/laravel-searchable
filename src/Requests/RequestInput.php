@@ -9,31 +9,14 @@ use Illuminate\Support\Stringable;
 
 class RequestInput
 {
-    public static function intOrNull(int $id): ?int
+    public static function intOrNull(int $value): int
     {
-        return $id === 0 ? null : $id;
+        return $value;
     }
 
-    public static function floatOrNull(int|float|string $value): int|float|null
+    public static function floatOrNull(int|float $value): float
     {
-        if (is_string($value)) {
-            $value = trim($value);
-            if ($value === '') {
-                return null;
-            }
-        }
-
-        if (is_numeric($value)) {
-            $floatValue = (float) $value;
-
-            if ($floatValue === 0.0) {
-                return null;
-            }
-
-            return $floatValue;
-        }
-
-        return null;
+        return (float) $value;
     }
 
     public static function stringOrNull(Stringable|string|null $value): ?string
@@ -42,7 +25,7 @@ class RequestInput
             return self::stringOrNull(value: $value->value());
         }
 
-        if ($value === null || $value === '' || is_numeric($value) && (float) $value === 0.0) {
+        if ($value === null || $value === '') {
             return null;
         }
 

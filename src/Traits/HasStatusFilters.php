@@ -90,6 +90,11 @@ trait HasStatusFilters
         return $this->hasStatus(value: Status::Disabled);
     }
 
+    public function accepted(): static
+    {
+        return $this->hasStatus(value: Status::Accepted);
+    }
+
     // -------------------------------------------------------------------------
     // Workflow / Lifecycle
     // -------------------------------------------------------------------------

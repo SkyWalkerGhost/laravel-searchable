@@ -34,6 +34,7 @@ use Shergela\Searchable\Traits\HasTextFilters;
 use Shergela\Searchable\Traits\HasTimeFilters;
 use Shergela\Searchable\Traits\HasUuidFilter;
 use Shergela\Searchable\Traits\HasValidateInputs;
+use Shergela\Searchable\Traits\HasZeroFilters;
 
 abstract class Searchable
 {
@@ -57,6 +58,7 @@ abstract class Searchable
     use HasTimeFilters;
     use HasUuidFilter;
     use HasValidateInputs;
+    use HasZeroFilters;
 
     protected const array LIKE_OPERATORS = ['ilike', 'like'];
 

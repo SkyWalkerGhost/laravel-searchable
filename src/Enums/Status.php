@@ -22,6 +22,7 @@ enum Status: string
     case Paused = 'paused';
     case Enabled = 'enabled';
     case Disabled = 'disabled';
+    case Accepted = 'accepted';
 
     // -------------------------------------------------------------------------
     // Workflow / Lifecycle — tasks, tickets, jobs, pipelines
