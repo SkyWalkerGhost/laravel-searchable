@@ -50,9 +50,9 @@ abstract class Searchable
     use HasParseValue;
     use HasPolymorphicFilters;
     use HasPriceFilters;
-    use HasStatusFilters;
     use HasRelationFilters;
     use HasSoftDeletesFilters;
+    use HasStatusFilters;
     use HasTextFilters;
     use HasTimeFilters;
     use HasUuidFilter;
