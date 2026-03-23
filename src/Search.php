@@ -103,7 +103,7 @@ class Search extends Searchable
      */
     private function validateRuleStructures(array $finalRules): void
     {
-        $isGet = request()->isMethod('GET');
+        $isGet = $this->request()->isMethod('GET');
 
         foreach ($finalRules as $field => $rules) {
             // 1. Validation rules must be provided as an array
@@ -158,10 +158,10 @@ class Search extends Searchable
     private function executeValidation(array $rules, array $messages, array $attributes): void
     {
         $validator = ValidatorFacade::make(
-            data: request()->all(),
+            data: $this->request()->all(),
             rules: $rules,
             messages: $messages,
-            attributes: $attributes
+            customAttributes: $attributes
         );
 
         if ($validator->fails()) {
@@ -174,7 +174,7 @@ class Search extends Searchable
      */
     private function handleValidationFailure(ValidatorContract $validator): void
     {
-        if (request()->expectsJson()) {
+        if ($this->request()->expectsJson()) {
             throw new HttpResponseException(
                 response()->json(['errors' => $validator->errors()], 422)
             );
