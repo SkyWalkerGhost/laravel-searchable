@@ -26,6 +26,16 @@ trait HasZeroFilters
         return $this->amount(field: $field, value: $value, operator: '<=');
     }
 
+    public function greaterZero(string $field = 'amount', ?float $value = 0): static
+    {
+        return $this->amount(field: $field, value: $value, operator: '>');
+    }
+
+    public function lessZero(string $field = 'amount', ?float $value = 0): static
+    {
+        return $this->amount(field: $field, value: $value, operator: '<');
+    }
+
     public function positiveAmount(string $field = 'amount'): static
     {
         return $this->amount(field: $field, value: 0, operator: '>');

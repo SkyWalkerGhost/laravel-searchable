@@ -80,4 +80,14 @@ trait HasPriceFilters
 
         return $this;
     }
+
+    public function priceFrom(?float $value = null): static
+    {
+        return $this->priceGreaterThan(value: $value);
+    }
+
+    public function priceTo(?float $value = null): static
+    {
+        return $this->priceLessThan(value: $value);
+    }
 }

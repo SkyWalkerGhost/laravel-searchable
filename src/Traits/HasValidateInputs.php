@@ -40,11 +40,11 @@ trait HasValidateInputs
         }
 
         return match ($scalarType) {
-            ScalarType::Int => RequestInput::intOrNull($request->integer($field)),
-            ScalarType::Float => RequestInput::floatOrNull($request->float($field)),
-            ScalarType::String => RequestInput::stringOrNull($request->string($field)),
+            ScalarType::Int => $request->filled($field) ? $request->integer($field) : null,
+            ScalarType::Float => $request->filled($field) ? $request->float($field) : null,
+            ScalarType::String => $request->filled($field) ? $request->string($field)->value() : null,
+            ScalarType::Bool => $request->filled($field) ? $request->boolean($field) : null,
             ScalarType::Date => RequestInput::dateOrNull($request->date($field)),
-            ScalarType::Bool => $request->has($field) ? $request->boolean($field) : null,
         };
     }
 }

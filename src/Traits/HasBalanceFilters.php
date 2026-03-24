@@ -84,4 +84,14 @@ trait HasBalanceFilters
 
         return $this;
     }
+
+    public function balanceFrom(?float $value = null): static
+    {
+        return $this->balanceGreaterThan(value: $value);
+    }
+
+    public function balanceTo(?float $value = null): static
+    {
+        return $this->balanceLessThan(value: $value);
+    }
 }

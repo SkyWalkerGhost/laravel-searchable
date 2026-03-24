@@ -75,7 +75,7 @@ trait HasParseValue
         }
 
         try {
-            return Carbon::parse($value)->toDateString();
+            return $value instanceof Carbon ? $value->toDateString() : Carbon::parse($value)->toDateString();
         } catch (Exception $e) {
             throw new Exception(
                 "Invalid date format for field: $field. Carbon error: ".$e->getMessage()
@@ -102,7 +102,7 @@ trait HasParseValue
         }
 
         try {
-            return Carbon::parse($value)->format($format);
+            return $value instanceof Carbon ? $value->toTimeString() : Carbon::parse($value)->format($format);
         } catch (Exception $e) {
             throw new Exception(
                 "Invalid time format for field: $field. Carbon error: ".$e->getMessage()

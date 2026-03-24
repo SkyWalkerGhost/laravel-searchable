@@ -252,4 +252,14 @@ trait HasAmountFilters
     {
         return $this->amount(field: 'overtime_amount', value: $value, operator: $operator);
     }
+
+    public function amountFrom(string $field = 'amount', ?float $value = null): static
+    {
+        return $this->amountGreaterThan(field: $field, value: $value);
+    }
+
+    public function amountTo(string $field = 'amount', ?float $value = null): static
+    {
+        return $this->amountLessThan(field: $field, value: $value);
+    }
 }
