@@ -18,7 +18,7 @@ Filtering is applied through a **static `Search` builder** that wraps an Eloquen
 
 ---
 
-# Why Use This Package
+## Why Use This Package
 
 This package is useful when your application has:
 
@@ -31,7 +31,7 @@ It keeps your controllers and services **clean and readable** while keeping filt
 
 ---
 
-# Installation
+## Installation
 
 ```bash
 composer require shergela/laravel-searchable
@@ -39,7 +39,7 @@ composer require shergela/laravel-searchable
 
 ---
 
-# Basic Usage
+## Basic Usage
 
 The package is used through the `Search` class.
 
@@ -59,7 +59,9 @@ $payments = Search::query(Payment::query())
 
 The `Search` builder wraps your Eloquent query and applies filters dynamically.
 
-# Validation
+---
+
+## Validation
 
 Filtering often uses request values, therefore validation is supported.
 
@@ -68,14 +70,9 @@ Validation can be defined in **two ways**:
 1. Using the `Validatable` interface on the model
 2. Passing rules manually to the `validate()` method
 
-# Using the `Validatable` Interface
+### Using the `Validatable` Interface
 
 Your model may implement the `Validatable` interface.
-
-```php
-use Shergela\Searchable\Contracts\Validatable;
-```
-
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -97,9 +94,7 @@ class Payment extends Model implements Validatable
 
 When the `validate()` method is called, the package will automatically read these rules.
 
----
-
-# Passing Rules Manually
+### Passing Rules Manually
 
 If you prefer not to use the interface, you may pass validation rules directly.
 
@@ -114,7 +109,7 @@ $payments = Search::query(Payment::query())
     ->amount();
 ```
 
-# Redirect After Validation Failure
+### Redirect After Validation Failure
 
 By default, when validation fails, Laravel redirects back to the previous page. If you need to redirect to a **specific URL** after a failed validation, use the `redirectTo()` method.
 
@@ -132,13 +127,9 @@ Search::query(Payment::query())
 
 > **Recommendation:** Call `redirectTo()` before `validate()` so the redirect destination is defined prior to validation being executed.
 
----
-
-# Important Rule for GET Requests
+### Important Rule for GET Requests
 
 When filtering using **GET requests**, all filter fields **must include the `nullable` rule**.
-
-Example:
 
 ```php
 [
@@ -150,18 +141,14 @@ This is important because when the field is not present in the request, Laravel 
 
 ---
 
-# Filtering Methods
+## Filtering Methods
 
-Every filter method supports **three ways of receiving its value**.
-This allows the filter to work with requests, manual values, or custom input names.
+Every filter method supports **three ways of receiving its value**. This allows the filter to work with requests, manual values, or custom input names.
 
----
+### 1. Automatic Value Detection from Field
 
-# 1. Automatic Value Detection from Field
+Filters automatically retrieve the value based on the field name. You do not need to pass the request manually.
 
-Filters will now automatically retrieve the value 
-based on the field name. You no longer need to pass 
-the request manually.
 ```php
 Search::query(Payment::query())
     ->amount(); // the field name is 'amount'
@@ -175,20 +162,14 @@ GET /payments?amount=100
 
 SQL equivalent:
 
-```
+```sql
 WHERE amount = 100
 ```
 
----
+### 2. Passing a Custom Field Name
 
-# 2. Passing a Custom Field Name
+Each filter method has a default field name it uses to read the value from the request and the corresponding database column. If your request input name or database column differs from the default, you can pass a custom field.
 
-Each filter method has a default field name it 
-uses to read the value from the request 
-and the corresponding database column. 
-If your request input name or database column 
-differs from the default, 
-you can pass a custom field.
 > **Important:** The `field` value must match **both** the request input name and the database column name — they must be identical.
 
 ```php
@@ -204,13 +185,11 @@ GET /payments?total_amount=100
 
 SQL equivalent:
 
-```
+```sql
 WHERE total_amount = 100
 ```
 
----
-
-# 3. Passing Field + Value
+### 3. Passing Field + Value
 
 You may bypass the request completely.
 
@@ -228,7 +207,7 @@ This is useful when filtering from:
 
 ---
 
-# Ignoring Missing Fields
+## Ignoring Missing Fields
 
 When a form has **disabled input fields**, the browser does not include them in the request payload. This means the corresponding key will be entirely absent from the request, which can cause the filter to behave unexpectedly — for example, applying an empty condition to the query.
 
@@ -248,63 +227,19 @@ Without `ignoreMissingFields()`, a disabled or absent field could still be evalu
 
 ---
 
-
-# Custom Search Methods
-
-You can create any class that extends Searchable and define your own custom search methods.
-
-The class name and its purpose are completely up to you. The following example uses UserService only to demonstrate how Searchable can be extended and used with the User model.
-
-# Creating a Searchable Class
-
-Create a class that extends Searchable and implement the model() method:
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Services\Users;
-
-use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
-use Shergela\Searchable\Searchable;
-
-class UserService extends Searchable
-{
-    protected function model(): Builder
-    {
-        return User::query();
-    }
-
-    public function customMethod(string $field, int $value): UserService
-    {
-        return $this->search(field: $field, value: $value);
-    }
-
-    public function customMethod2(string $field, string $value): UserService
-    {
-        return $this->search(field: $field, value: $value);
-    }
-}
-```
-
-Note: UserService is only an example. You can create any class you need. The important part is that the class extends Searchable and implements the required model() method.
-
----
-
-# Full Text Search
+## Full Text Search
 
 The `fullTextSearch()` method performs an optimized text search across one or more columns. It automatically detects the database driver and applies the most appropriate search strategy.
 
-## Supported Drivers
+### Supported Drivers
+
 | Driver | Strategy |
 |---|---|
 | `pgsql` | `tsvector` + `plainto_tsquery` |
 | `mysql` | `MATCH ... AGAINST` (Natural Language Mode) |
 | Other (SQLite, etc.) | `LIKE` fallback with `LOWER()` |
 
-## Parameters
+### Parameters
 
 | Parameter | Type | Default | Description |
 |---|---|---|---|
@@ -312,7 +247,7 @@ The `fullTextSearch()` method performs an optimized text search across one or mo
 | `$relation` | `string\|null` | `null` | Relation name if searching in a related model |
 | `$value` | `string\|null` | `null` | Search value. If `null`, filter is skipped |
 
-## Basic Usage
+### Basic Usage
 
 Search within the model's own columns:
 
@@ -324,7 +259,7 @@ Search::query(Payment::query())
     );
 ```
 
-## Searching Within a Relation
+### Searching Within a Relation
 
 If the searchable columns belong to a related model, pass the relation name:
 
@@ -347,26 +282,29 @@ WHERE EXISTS (
 )
 ```
 
-## Driver Behavior
+### Driver Behavior
 
 **PostgreSQL:**
+
 ```sql
 WHERE (to_tsvector('simple', coalesce("first_name", '')) || to_tsvector('simple', coalesce("last_name", '')))
     @@ plainto_tsquery('simple', ?)
 ```
 
 **MySQL:**
+
 ```sql
 WHERE MATCH(`first_name`, `last_name`) AGAINST(? IN NATURAL LANGUAGE MODE)
 ```
 
 **SQLite / Other (LIKE fallback):**
+
 ```sql
 WHERE LOWER("first_name") LIKE '%john%'
    OR LOWER("last_name") LIKE '%john%'
 ```
 
-## Validation Rules
+### Validation Rules
 
 The method enforces two rules on the `columns` array:
 
@@ -384,7 +322,7 @@ The method enforces two rules on the `columns` array:
 ->fullTextSearch(columns: ['first_name; DROP TABLE users'], value: 'john')
 ```
 
-## Notes
+### Notes
 
 - If `$value` is `null`, the filter is **silently skipped** — no query condition is added.
 - The `LIKE` fallback is **case-insensitive** via `LOWER()`.
@@ -393,7 +331,7 @@ The method enforces two rules on the `columns` array:
 
 ---
 
-# Eager Loading
+## Eager Loading
 
 Since the package wraps an Eloquent builder, you may also use `with()`.
 
@@ -404,17 +342,16 @@ Search::query(Payment::query())
 
 ---
 
-# Available Ordering/Helper Methods
-### methods:
+## Available Ordering/Helper Methods
 
-- get
-- first
-- pluck
-- orderBy
-- orderByDesc
-- latest
-- paginate
-- cursorPaginate
+* `get`
+* `first`
+* `pluck`
+* `orderBy`
+* `orderByDesc`
+* `latest`
+* `paginate`
+* `cursorPaginate`
 
 ```php
 Search::query(Payment::query())
@@ -424,21 +361,28 @@ Search::query(Payment::query())
 
 Example SQL:
 
-```
+```sql
 ORDER BY id DESC
 ```
 
 ---
 
-# Custom Methods
+## Custom Search Methods
 
-If the built-in filter methods are not enough, you can extend the `Searchable` class and define your own custom methods.
+If the built-in filter methods are not enough, you can extend the `Searchable` class and define your own custom methods. The class name and its purpose are entirely up to you — the examples below use `UserService` purely to demonstrate how `Searchable` can be extended and used with the `User` model.
 
-## Creating a Custom Filters
+### 1. Creating a Searchable Class
 
-Extend `Shergela\Searchable\Searchable` and implement the `model()` method to return the base Eloquent query. Then define your custom filter methods using the internal `search()` helper.
+Extend `Shergela\Searchable\Searchable` and implement the `model()` method, which determines which Eloquent model the search will run against:
 
 ```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Services\Users;
+
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Shergela\Searchable\Searchable;
 
@@ -465,82 +409,41 @@ class UserService extends Searchable
 }
 ```
 
-## Calling Custom Methods
+Custom methods can contain any logic your application needs. They simply need to return the `Searchable` instance so they can be chained, and they internally call the `search()` helper to add a condition to the query.
 
-Use the static `query()` entry point, just like with the `Search` class.
+### 2. Calling Custom Methods
 
-```php
-UserService::query()
-    ->customMethod(field: 'status', value: $request->string('status')->value())
-    ->customMethod2(field: 'email', value: $request->string('email')->value())
-    ->orderByDesc();
-```
-
-> **Note:** This approach keeps filtering logic **encapsulated in a dedicated service class**, making it easy to reuse 
-> and test.
-
-# Defining the Model
-
-The **model()** method determines which Eloquent model will be used by the search:
+Use the static `query()` entry point, just like with the `Search` class. Custom methods can be freely combined and chained:
 
 ```php
-protected function model(): Builder
-{
-    return User::query();
-}
-```
+use App\Services\Users\UserService;
 
-In this example, the search will be performed against the User model.
-
-# Creating Custom Search Methods
-
-You can define your own methods that internally call the **search()** method:
-
-```php
-public function customMethod(string $field, int $value): UserService
-{
-    return $this->search(field: $field, value: $value);
-}
-```
-
-The custom method can contain any logic required by your application. It simply needs to return the **Searchable** instance so 
-that the methods can be chained.
-
-Custom methods can be used together with the search methods provided by **Searchable**:
-
-```php
 $query = UserService::query()
-    ->customMethod(field: 'id', value: 1)
+    ->customMethod(field: 'id', value: '1')
     ->customMethod2(field: 'email', value: 'john@gmail.com')
     ->firstName(value: 'John')
     ->lastName(value: 'Doe');
 ```
 
-Each method adds its own condition to the query.
+In this example, the query contains conditions for `id = 1`, `email = 'john@gmail.com'`, `first_name = 'John'`, and `last_name = 'Doe'`.
 
-In this example, the query contains conditions for:
+All conditions are combined into the same query.
 
-* id = 1 
-* email = 'john@gmail.com' 
-* first_name = 'John' 
-* last_name = 'Doe'
-  All conditions are combined into the same query.
+> **Note:** This approach keeps filtering logic **encapsulated in a dedicated service class**, making it easy to reuse and test.
 
-Executing the Query
+### 3. Executing the Query
 
-Calling **query()** and chaining search methods builds the query, but does not execute it immediately.
+Calling `query()` and chaining search methods builds the query but does not execute it immediately. You execute it using standard Eloquent methods such as `first()` or `get()`.
 
-You can execute the query using standard Eloquent methods such as **first()** or **get()**.
+**Get a single result:**
 
-
-# Get a Single Result
 ```php
 $user = UserService::query()
-    ->customMethod(field: 'id', value: 1)
+    ->customMethod(field: 'id', value: '1')
     ->first();
 ```
 
-# Get All Results
+**Get all results:**
 
 ```php
 $users = UserService::query()
@@ -548,11 +451,11 @@ $users = UserService::query()
     ->get();
 ```
 
-# Complete Example
+**Complete example:**
 
 ```php
 $query = UserService::query()
-    ->customMethod(field: 'id', value: 1)
+    ->customMethod(field: 'id', value: '1')
     ->customMethod2(field: 'email', value: 'john@gmail.com')
     ->firstName(value: 'John')
     ->lastName(value: 'Doe');
@@ -560,13 +463,9 @@ $query = UserService::query()
 $user = $query->first();
 ```
 
-This approach allows you to extend Searchable with application-specific search methods while keeping the same fluent and chainable API.
+### 4. Using Laravel's Eloquent Methods Directly
 
----
-
-# Using Laravel's Eloquent Methods Directly
-
-If you need to use native Laravel Eloquent methods (such as `where`, `select`, `join`, `paginate`, etc.), you can access the underlying Eloquent builder via the `builder()` method.
+If you need native Laravel Eloquent methods (such as `where`, `select`, `join`, `paginate`, etc.), access the underlying Eloquent builder via the `builder()` method.
 
 ```php
 UserService::query()
@@ -576,11 +475,11 @@ UserService::query()
     ->paginate(15);
 ```
 
-> **Recommendation:** Call `builder()` at the **end of the chain**, after all package methods have been applied. Calling it earlier will return a plain Eloquent builder, meaning you will lose access to the package's custom methods for any subsequent calls.
+> **Recommendation:** Call `builder()` at the **end of the chain**, after all package methods have been applied. Calling it earlier returns a plain Eloquent builder, meaning you lose access to the package's custom methods for any subsequent calls.
 
 ---
 
-# Full Example
+## Full Example
 
 ```php
 use Shergela\Searchable\Search;
@@ -596,6 +495,8 @@ $payments = Search::query(Payment::query())
     ->orderByDesc();
 ```
 
-# License
+---
+
+## License
 
 MIT
