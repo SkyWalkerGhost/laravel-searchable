@@ -248,6 +248,51 @@ Without `ignoreMissingFields()`, a disabled or absent field could still be evalu
 
 ---
 
+
+# Custom Search Methods
+
+You can create any class that extends Searchable and define your own custom search methods.
+
+The class name and its purpose are completely up to you. The following example uses UserService only to demonstrate how Searchable can be extended and used with the User model.
+
+# Creating a Searchable Class
+
+Create a class that extends Searchable and implement the model() method:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Services\Users;
+
+use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
+use Shergela\Searchable\Searchable;
+
+class UserService extends Searchable
+{
+    protected function model(): Builder
+    {
+        return User::query();
+    }
+
+    public function customMethod(string $field, int $value): UserService
+    {
+        return $this->search(field: $field, value: $value);
+    }
+
+    public function customMethod2(string $field, string $value): UserService
+    {
+        return $this->search(field: $field, value: $value);
+    }
+}
+```
+
+Note: UserService is only an example. You can create any class you need. The important part is that the class extends Searchable and implements the required model() method.
+
+---
+
 # Full Text Search
 
 The `fullTextSearch()` method performs an optimized text search across one or more columns. It automatically detects the database driver and applies the most appropriate search strategy.
@@ -389,7 +434,7 @@ ORDER BY id DESC
 
 If the built-in filter methods are not enough, you can extend the `Searchable` class and define your own custom methods.
 
-## Creating a Custom Service
+## Creating a Custom Filters
 
 Extend `Shergela\Searchable\Searchable` and implement the `model()` method to return the base Eloquent query. Then define your custom filter methods using the internal `search()` helper.
 
@@ -431,7 +476,91 @@ UserService::query()
     ->orderByDesc();
 ```
 
-This approach keeps filtering logic **encapsulated in a dedicated service class**, making it easy to reuse and test.
+> **Note:** This approach keeps filtering logic **encapsulated in a dedicated service class**, making it easy to reuse 
+> and test.
+
+# Defining the Model
+
+The **model()** method determines which Eloquent model will be used by the search:
+
+```php
+protected function model(): Builder
+{
+    return User::query();
+}
+```
+
+In this example, the search will be performed against the User model.
+
+# Creating Custom Search Methods
+
+You can define your own methods that internally call the **search()** method:
+
+```php
+public function customMethod(string $field, int $value): UserService
+{
+    return $this->search(field: $field, value: $value);
+}
+```
+
+The custom method can contain any logic required by your application. It simply needs to return the **Searchable** instance so 
+that the methods can be chained.
+
+Custom methods can be used together with the search methods provided by **Searchable**:
+
+```php
+$query = UserService::query()
+    ->customMethod(field: 'id', value: 1)
+    ->customMethod2(field: 'email', value: 'john@gmail.com')
+    ->firstName(value: 'John')
+    ->lastName(value: 'Doe');
+```
+
+Each method adds its own condition to the query.
+
+In this example, the query contains conditions for:
+
+* id = 1 
+* email = 'john@gmail.com' 
+* first_name = 'John' 
+* last_name = 'Doe'
+  All conditions are combined into the same query.
+
+Executing the Query
+
+Calling **query()** and chaining search methods builds the query, but does not execute it immediately.
+
+You can execute the query using standard Eloquent methods such as **first()** or **get()**.
+
+
+# Get a Single Result
+```php
+$user = UserService::query()
+    ->customMethod(field: 'id', value: 1)
+    ->first();
+```
+
+# Get All Results
+
+```php
+$users = UserService::query()
+    ->customMethod2(field: 'email', value: 'john@gmail.com')
+    ->get();
+```
+
+# Complete Example
+
+```php
+$query = UserService::query()
+    ->customMethod(field: 'id', value: 1)
+    ->customMethod2(field: 'email', value: 'john@gmail.com')
+    ->firstName(value: 'John')
+    ->lastName(value: 'Doe');
+
+$user = $query->first();
+```
+
+This approach allows you to extend Searchable with application-specific search methods while keeping the same fluent and chainable API.
 
 ---
 
