@@ -158,10 +158,10 @@ class Search extends Searchable
     private function executeValidation(array $rules, array $messages, array $attributes): void
     {
         $validator = ValidatorFacade::make(
-            data: $this->request()->all(),
-            rules: $rules,
-            messages: $messages,
-            customAttributes: $attributes
+            $this->request()->all(),
+            $rules,
+            $messages,
+            $attributes
         );
 
         if ($validator->fails()) {
