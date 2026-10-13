@@ -35,4 +35,44 @@ trait HasIdFilters3
     {
         return $this->id(field: 'category_group_id', value: $id, operator: $operator);
     }
+
+    public function clientId(?int $id = null, string $operator = '='): static
+    {
+        return $this->id(field: 'client_id', value: $id, operator: $operator);
+    }
+
+    public function projectId(?int $id = null, string $operator = '='): static
+    {
+        return $this->id(field: 'project_id', value: $id, operator: $operator);
+    }
+
+    public function countryId(?int $id = null, string $operator = '='): static
+    {
+        return $this->id(field: 'country_id', value: $id, operator: $operator);
+    }
+
+    public function cityId(?int $id = null, string $operator = '='): static
+    {
+        return $this->id(field: 'city_id', value: $id, operator: $operator);
+    }
+
+    public function propertyId(?int $id = null, string $operator = '='): static
+    {
+        return $this->id(field: 'property_id', value: $id, operator: $operator);
+    }
+
+    public function propertyTypeId(?int $id = null, string $operator = '='): static
+    {
+        return $this->id(field: 'property_type_id', value: $id, operator: $operator);
+    }
+
+    public function renovationId(?int $id = null, string $operator = '='): static
+    {
+        return $this->id(field: 'renovation_id', value: $id, operator: $operator);
+    }
+
+    public function renovationConditionId(?int $id = null, string $operator = '='): static
+    {
+        return $this->id(field: 'renovation_condition_id', value: $id, operator: $operator);
+    }
 }
